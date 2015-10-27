@@ -1,5 +1,5 @@
 name:                read-editor
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Opens a temporary file on the system's EDITOR and returns the resulting edits
 description:         See <https://github.com/yamadapc/haskell-read-editor> for more information
 homepage:            https://github.com/yamadapc/haskell-read-editor
