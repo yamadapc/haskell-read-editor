@@ -25,7 +25,7 @@ script:
  - cabal configure --enable-tests --enable-benchmarks -v2
  # this builds all libraries and executables (including tests/benchmarks)
  - cabal build
- - cabal test
+ # - cabal test
  - cabal check
  # tests that a source-distribution can be generated
  - cabal sdist
