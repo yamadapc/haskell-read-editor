@@ -1,6 +1,7 @@
 module System.ReadEditor
        ( -- * Main exports
          readEditor
+       , readEditorWith
        , openEditor
        , openEditorWithPrompt
          -- * Utility
@@ -20,6 +21,13 @@ import           System.Process     (system)
 -- | Opens a file in the sytem's editor and returns it's contents after it's saved.
 readEditor :: IO String
 readEditor = withSystemTempFile "read-editor" $ \fp _ -> do
+    openEditor fp
+    readFile fp
+
+-- | Opens a file, fills it some content and returns it's contents after it's saved.
+readEditorWith :: String -> IO String
+readEditorWith contents = withSystemTempFile "read-editor" $ \fp _ -> do
+    writeFile fp contents
     openEditor fp
     readFile fp
 
