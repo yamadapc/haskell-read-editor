@@ -20,6 +20,20 @@ main = do
     putStrLn content
 ```
 
+### Reading edits of existing content
+```haskell
+module Main where
+
+import System.ReadEditor
+
+main :: IO ()
+main = do
+    putStrLn ">>> Opening editor for you to write me some content"
+    content <- readEditorWith "Some stuff that's already here"
+    putStrLn ">>> You wrote:"
+    putStrLn content
+```
+
 ## Support through CI
 Travis-CI is building this package with GHC versions 7.6, 7.8 and 7.10. If the
 build status is green, they should all be supported. Check the [project page](https://travis-ci.org/yamadapc/haskell-read-editor)
