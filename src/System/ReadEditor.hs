@@ -13,7 +13,8 @@ module System.ReadEditor
 import           Control.Exception  (finally)
 import           System.Directory   (getTemporaryDirectory, removeFile)
 import           System.Environment (getEnv)
-import           System.IO
+import           System.IO          (Handle, hClose, hFlush, hPutStr,
+                                     openTempFile, stdout)
 import           System.IO.Error    (catchIOError)
 import           System.Process     (system)
 
