@@ -13,22 +13,25 @@ module System.ReadEditor
 import           Control.Exception  (finally)
 import           System.Directory   (getTemporaryDirectory, removeFile)
 import           System.Environment (getEnv)
-import           System.IO          (Handle, hClose, hFlush, openTempFile,
-                                     stdout)
+import           System.IO
 import           System.IO.Error    (catchIOError)
 import           System.Process     (system)
 
 -- | Opens a file in the sytem's editor and returns it's contents after it's saved.
 readEditor :: IO String
-readEditor = withSystemTempFile "read-editor" $ \fp _ -> do
-    openEditor fp
-    readFile fp
+readEditor = withSystemTempFile "read-editor" readEditor'
 
 -- | Opens a file, fills it some content and returns it's contents after it's saved.
 readEditorWith :: String -> IO String
-readEditorWith contents = withSystemTempFile "read-editor" $ \fp _ -> do
-    writeFile fp contents
+readEditorWith contents = withSystemTempFile "read-editor" $ \fp temph -> do
+    hPutStr temph contents
+    hFlush temph
+    readEditor' fp temph
+
+readEditor' :: FilePath -> Handle -> IO String
+readEditor' fp temph = do
     openEditor fp
+    hClose temph
     readFile fp
 
 -- | Opens a file in the sytem's editor, waits until it's closed.
@@ -41,7 +44,8 @@ openEditorWithPrompt p fp = do
     editorCmd <- catchIOError (getEnv "EDITOR") (const promptForEditor)
     _ <- system $ editorCmd ++ " " ++ fp
     return ()
-  where promptForEditor = prompt p
+  where
+    promptForEditor = prompt p
 
 -- | Prompts for a line and returns it
 prompt :: String -> IO String
@@ -55,4 +59,6 @@ withSystemTempFile :: String -> (FilePath -> Handle -> IO a) -> IO a
 withSystemTempFile templ fn = do
     tempdir <- catchIOError getTemporaryDirectory (\_ -> return ".")
     (tempfile, temph) <- openTempFile tempdir templ
-    finally (fn tempfile temph) (hClose temph >> removeFile tempfile)
+    finally
+        (fn tempfile temph)
+        (removeFile tempfile)
